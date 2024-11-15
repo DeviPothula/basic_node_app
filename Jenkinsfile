@@ -16,14 +16,20 @@ pipeline {
 
         stage('Start Application') {
             steps {
-                sh 'node server.js'
+                sh 'node server.js &'
+            }
+        }
+
+        stage('console') {
+            steps {
+                echo "Sony !!"
             }
         }
     }
 
     post {
         always {
-            emailext (
+            emailext(
                 subject: "Jenkins Build: ${currentBuild.fullDisplayName}",
                 body: """<p>Build Details:</p>
                          <ul>
@@ -32,8 +38,8 @@ pipeline {
                            <li>Build Number: ${env.BUILD_NUMBER}</li>
                            <li>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></li>
                          </ul>""",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'your-email@example.com',
+                recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']],
+                to:"devikapothula597@gmail.com",
                 mimeType: 'text/html'
             )
         }
